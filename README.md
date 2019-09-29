@@ -18,8 +18,6 @@ We cleaned up the data so it would easier to process. For instance, some of the 
 
 ## Original features
 
-![](figures/index_125.png)
-![](figures/index_397.png)
 
 
 ## Our approach
@@ -37,4 +35,15 @@ Mean, Standard deviation, Max, Min, double derivative mean, number of non-zero g
 
 ## Solution
 We will cut up the data (down-sample).
+
+
+
+# References
+[https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average ](ARIMA wikipedia)
+
+
+# Figures
+![](figures/index_125.png)
+![](figures/index_397.png)
+
 
