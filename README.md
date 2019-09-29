@@ -18,7 +18,19 @@ We wanted all of our test-runs to be the same size so we chopped them into 1 min
 
 
 ## Our approach
+### Weeding out the bad data
+#### Extracting some features
+- Mean
+- Standard deviation
+- Max
+- Min
+- double derivative mean
 
+- number of non-zero gradients 3D only for 4,5,6
+- mean gradient when grad is non-zero, 2D only for 4,5
+- how many times the gradient changes sign - for every map
+
+### ML
 
 
 ## Solution
