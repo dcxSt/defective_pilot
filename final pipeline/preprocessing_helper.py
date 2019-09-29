@@ -236,9 +236,9 @@ def get_features_map(path_string="../data/data_lstm/X_raw.npy",pickle_name="time
     
     # pickle the data
     if pickle:
-        np.array(complete_features_list).dump(open('data_lstm/x_feature_arima.npy', 'wb'))
+        np.array(complete_features_list).dump(open('data/x_feature_arima.npy', 'wb'))
     
-    return complete_features_list
+    return np.array(complete_features_list)
     
 
 def load_time_series(path_string='../data/data_lstm/X_raw.npy'):
