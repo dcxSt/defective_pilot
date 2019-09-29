@@ -16,19 +16,16 @@ Getting rid of useless data. Some of the test runs in the CSV files were quite s
 
 We wanted all of our test-runs to be the same size so we chopped them into 1 minuet lengths. Also we normalised the data.
 
+## Original features
+
+![](figures/index_125.png)
+![](figures/index_397.png)
+
 
 ## Our approach
 ### Weeding out the bad data
 #### Extracting some features
-- Mean
-- Standard deviation
-- Max
-- Min
-- double derivative mean
-
-- number of non-zero gradients 3D only for 4,5,6
-- mean gradient when grad is non-zero, 2D only for 4,5
-- how many times the gradient changes sign - for every map
+Mean, Standard deviation, Max, Min, double derivative mean, number of non-zero gradients 3D only for 4-5-6, mean gradient when grad is non-zero - 2D only for 4 & 5, How many times the gradient changes sign
 
 ### ML
 
