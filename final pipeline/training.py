@@ -38,15 +38,20 @@ def clean_nans(df):
     return df
 
 
-def get_split(df):
+def get_split(df, test=False):
     '''Big method to get pilot split'''
     def get_features(df):
+        if test:
+            return [np.array(df.iloc[:, n]) for n in range(1, 11)]
         return [np.array(df.iloc[:, n]) for n in range(1, 12)]
 
+    outter_pilot_id = None
     def list_of_indexes(df):
         pilot_id = np.array(df.iloc[:, -1])
+        outter_pilot_id = pilot_id
         x0 = pilot_id[0]  # pilot id is the current
         x = [[0, pilot_id[0]]]
+        # x is a list where each element is a list with two elements, [the , the pilot id]
         for i in range(len(pilot_id)):
             if pilot_id[i] != x0:
                 x.append([i, pilot_id[i]])
@@ -54,6 +59,7 @@ def get_split(df):
         # find the number of ids that were counted twice
         # len(x)
         count = 0
+        # this check if there are duplicates
         for i in range(len(x)):
             for j in range(i + 1, len(x)):
                 if x[i][1] == x[j][1]:
@@ -64,13 +70,18 @@ def get_split(df):
 
 
     def get_features_by_test_run(df):
-        features = np.transpose([np.array(df.iloc[:, n]) for n in range(1, 13)])
-
+        if test:
+            features = np.transpose([np.array(df.iloc[:, n]) for n in range(1, 12)])
+        else:
+            features = np.transpose([np.array(df.iloc[:, n]) for n in range(1, 13)])
         indexes, count = list_of_indexes(df)
         features_by_run = []
-
-    features = np.transpose([np.array(df.iloc[:, n]) for n in range(1, 13)])
+    if test:
+        features = np.transpose([np.array(df.iloc[:, n]) for n in range(1, 12)])
+    else:
+        features = np.transpose([np.array(df.iloc[:, n]) for n in range(1, 13)])
     indexes, count = list_of_indexes(df)
+    real_pilot_id = [i[1] for i in indexes]
     indexes = [i[0] for i in indexes]
 
     features_by_run = []
@@ -95,15 +106,17 @@ def get_split(df):
 
     defective_pilot = []
     good_pilot = []
-
-    for i in features_by_run:
-        if i[0][-2] == 0:
-            good_pilot.append(i)
-        elif i[0][-2] == 1:
-            defective_pilot.append(i)
-        else:
-            raise Exception
-    return defective_pilot, good_pilot
+    if not test:
+        for i in features_by_run:
+            if i[0][-2] == 0:
+                good_pilot.append(i)
+            elif i[0][-2] == 1:
+                defective_pilot.append(i)
+            else:
+                raise Exception
+        return defective_pilot, good_pilot
+    else:
+        return features_by_run, real_pilot_id
 
 def list_to_np(X_good, X_def):
     '''converts Steve's weird lists to normal human-readable formats'''
@@ -176,4 +189,36 @@ if __name__ == '__main__':
     f1 = f1_score(y_test, pred)
     print('Accuracy score: {}\t F1 score: {}.'.format(acc, f1))
 
-    ## done training, now streamlining
+    ## done training, now streamlining testing process
+    test_df = pd.read_csv(args.test_ds)
+    test_df = clean_nans(test_df)
+    features_by_run, pilot_id = get_split(test_df, test=True)
+    print(len(pilot_id))
+    #MANUAL shtuff
+    newlist = list()
+    new_pilot_list = list()
+    for i in range(len(features_by_run)):
+        if len(features_by_run[i]) > 600:
+            newlist.append(features_by_run[i][:600])
+            new_pilot_list.append(pilot_id[i])
+    XX = np.array(newlist)[:, :, :10]
+    np.save('data/XX.npy', XX)
+    XX = get_features_map('data/XX.npy', pickle=False)
+    XX = pca.transform(XX)
+    XX_emb = reducer.transform(XX)
+    XX = np.concatenate([XX, XX_emb], axis=1)
+    pred = model.predict(XX)
+    print()
+    print()
+    print(len(pred), len(new_pilot_list))
+    import csv
+
+    csvData = [['Pilot ID', 'Flag']]
+    for i in range(len(pred)):
+        csvData.append([new_pilot_list[i],pred[i]])
+
+    with open('submission.csv', 'w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows(csvData)
+    csvFile.close()
+
