@@ -5,6 +5,7 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 from preprocessing_helper import get_features_map
 import pandas as pd
 import umap
@@ -15,6 +16,33 @@ parser.add_argument('--train_ds', type=str, default='data/CAE_dataset.csv',
 parser.add_argument('--test_ds', type=str, default='data/CAE_test_dataset.csv',
                     help='..')
 args = parser.parse_args()
+
+
+def remove_wrong_points(X, y):
+    X_zeros = []
+    for i in range(len(y)):
+        if y[i] == 0:
+            X_zeros.append(np.append(X[i], i))
+    X_zeros = np.array(X_zeros)
+    #X_zeros[:,:-1]
+    Kmean = KMeans(n_clusters=1).fit(X_zeros[:,:-1])
+    center = Kmean.cluster_centers_
+    center.reshape(81)
+    distance = []
+    for zeros in X_zeros:
+        dist = np.linalg.norm(zeros[:-1] - center)
+        distance.append((dist,zeros[-1]))
+    distance = sorted(distance, key=lambda a_entry: a_entry[0])
+    wrong_points = distance[int(0.8*len(distance)):]
+    wrong_points = np.array(wrong_points)
+    wrong_points = wrong_points.transpose()
+    #new_X = np.delete(X, wrong_points[1],0)
+    #new_y = np.delete(y, wrong_points[1],0)
+    #np.save("y_new.npy", new_y)
+    #np.save("x_new.npy", new_X)
+    for i in wrong_points[1]:
+        y[int(i)] = 1
+    return X, y
 
 
 def graph_embedding(X_emb_1, X_emb_0):
@@ -161,6 +189,7 @@ if __name__ == '__main__':
     X = np.load('data/x_feature_arima.npy')
 
     ### TRAINING ###
+    X, y = remove_wrong_points(X, y)
 
     pca = PCA(n_components=15)
     X = pca.fit_transform(X, y)
@@ -179,6 +208,7 @@ if __name__ == '__main__':
         return X
 
     X = repeated_umap(X, 1)
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
     model = LogisticRegression(solver='saga')
     model.fit(X_train, y_train)
