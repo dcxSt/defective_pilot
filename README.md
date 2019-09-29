@@ -6,12 +6,6 @@ After a tragic incident where a pilot commited suicide on the job, we want to de
 We want to use the data to see if the pilot is defective (aka, label = 1), and identify the ones that are suspicious (labelled as 0's but could be in fact 1's).
 
 
-## Ideas and Brainstorming
-
-
-Cluster the 1's, centered at some point --- centroid, make balls around until it covers 90% of data, closer to centroid of 0's should be lesser weight of label on the supervised learning
-then use RNN ? 2 enboxed lstm's.
-
 
 ## Preprocessing
 We cleaned up the data so it would easier to process. For instance, some of the test runs in the CSV files were too quite short compared to the others, and so we decided to drop all the runs with under 600 data points, which corresponds to one minute of flight simulation. Moreover, we normalized the data and got rid of outliers. This amounts to roughtly 13% of the data. Note that we decided to chop off the data to 60 seconds length because of the time limit that we had, we tried to keep it as simple as possible to spend more time on the architecture of our model. However, in real life, it would be better to keep as much information as possible to process, so we get higher accuracy.
@@ -31,7 +25,13 @@ Since we know that the data is mislabelled with an unknown probability, we decid
 We haven't have time to try the LSTM with that data, but that would be interesting to look at to compare performances.
 
 
-### ML
+### AI
+
+For the artificial intelligence part, we used LSTM, K-Mean clustering, and logistic regression models. 
+
+### SOCIAL GOOD
+
+Our model has the potential to replace the instructor, and as we have seen in the dataset, the errors in the identification of lack of soft skills in the pilots. This will contribute to our society's safety, accountability, as well as the population's overall well-being.
 
 ## Original features
 
@@ -39,8 +39,14 @@ We haven't have time to try the LSTM with that data, but that would be interesti
 ![](figures/index_397.png)
 
 
+## OTHER IDEAS
+
+An idea that we haven't had the chance to try is instead of clustering the non-defective ones, we could cluster the ones that are actually defective. This way, we could draw spheres around the centroid to identify the pilots that are identified as zeros but are close to the centroid so they could be considered suspicious. 
+
+Also, we would have liked to train the LSTM on a correctly labelled dataset if we had the time to do so. 
+
+One more thing we could have tried is the enbox another LSTM or add another layer to see if the performance would have been better. 
 
 
-## Solution
-We will cut up the data (down-sample).
+
 
