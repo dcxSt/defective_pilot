@@ -18,8 +18,6 @@ We wanted all of our test-runs to be the same size so we chopped them into 1 min
 
 ## Original features
 
-![](figures/index_125.png)
-![](figures/index_397.png)
 
 
 ## Our approach
@@ -32,4 +30,15 @@ Mean, Standard deviation, Max, Min, double derivative mean, number of non-zero g
 
 ## Solution
 We will cut up the data (down-sample).
+
+
+
+# References
+[https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average ](ARIMA wikipedia)
+
+
+# Figures
+![](figures/index_125.png)
+![](figures/index_397.png)
+
 
